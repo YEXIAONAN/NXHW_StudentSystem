@@ -322,7 +322,7 @@
             <button class="btn btn-primary"><i class="ri-add-line"></i> 新增学生</button>
           </div>
           <table aria-describedby="学生列表">
-            <thead><tr><th>姓名</th><th>班级</th><th>专业方向</th><th>年级</th><th>最新成绩</th><th>操作</th></tr></thead>
+            <thead><tr><th>姓名</th><th>国籍</th><th>专业方向</th><th>年龄</th><th>最新成绩</th><th>操作</th></tr></thead>
             <tbody id="studentTable"></tbody>
           </table>
         </div>
@@ -413,23 +413,23 @@
    1. FULL DATA RESTORATION
    =========================== */
 const students = [
-  { id:1,name:"程语兴",cls:"intelligence-01",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"2024级",gender:"男",scores:[80],phone:"13800000001",email:"叶小楠" },
-  { id:2,name:"农秋峰",cls:"intelligence-01",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"2024级",gender:"男",scores:[85],phone:"13800000002",email:"叶小楠" },
-  { id:3,name:"黄世杰",cls:"intelligence-01",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"2025级",gender:"男",scores:[0],phone:"13800000002",email:"叶小楠" },
-  { id:4,name:"陈启添",cls:"intelligence-01",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"2025级",gender:"男",scores:[0],phone:"13800000002",email:"叶小楠" },
-  { id:5,name:"黄警威",cls:"intelligence-01",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"2025级",gender:"男",scores:[0],phone:"13800000002",email:"叶小楠" },
-  { id:6,name:"李俊昊",cls:"intelligence-02",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"2024级",gender:"男",scores:[87],phone:"13800000002",email:"Hi-Tao" },
-  { id:7,name:"潘润根",cls:"intelligence-02",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"2024级",gender:"男",scores:[66],phone:"13800000002",email:"Hi-Tao" },
-  { id:8,name:"卢裕龙",cls:"intelligence-02",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"2024级",gender:"男",scores:[70],phone:"13800000002",email:"Hi-Tao" },
-  { id:9,name:"杨慧琴",cls:"intelligence-02",age:"2025年秋季学期",major:"人工智能-前端开发工程师",grade:"2025级",gender:"女",scores:[41],phone:"13800000002",email:"Hi-Tao" },
-  { id:10,name:"凌财",cls:"intelligence-02",age:"2025年秋季学期",major:"人工智能-前端开发工程师",grade:"2025级",gender:"男",scores:[72],phone:"13800000002",email:"Hi-Tao" },
-  { id:11,name:"黄正宇",cls:"intelligence-03",age:"2024年秋季学期",major:"人工智能-机器人工程师",grade:"2024级",gender:"男",scores:[50],phone:"13800000002",email:"Xiang" },  
-  { id:12,name:"杜宇轩",cls:"intelligence-03",age:"2025年秋季学期",major:"人工智能-机器人工程师",grade:"2025级",gender:"男",scores:[40],phone:"13800000002",email:"Xiang" },  
-  { id:13,name:"杨演文",cls:"intelligence-03",age:"2025年秋季学期",major:"人工智能-机器人工程师",grade:"2025级",gender:"男",scores:[40],phone:"13800000002",email:"Xiang" },
-  { id:14,name:"赵鸿宁",cls:"intelligence-04",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"女",scores:[0],phone:"13800000002",email:"不要@我" },
-  { id:15,name:"张苏斌",cls:"intelligence-04",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"男",scores:[41],phone:"13800000002",email:"不要@我" },
-  { id:16,name:"李易萱",cls:"intelligence-04",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"女",scores:[20],phone:"13800000002",email:"不要@我" },
-  { id:17,name:"石成烨",cls:"intelligence-04",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"男",scores:[41],phone:"13800000002",email:"不要@我" }
+  { id:1,name:"程语兴",cls:"中国",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"16岁",gender:"男",scores:[80],phone:"+86 13377181359",email:"叶小楠" },
+  { id:2,name:"农秋峰",cls:"中国",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"16岁",gender:"男",scores:[85],phone:"+86 19257716750",email:"叶小楠" },
+  { id:3,name:"黄世杰",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"2025级",gender:"男",scores:[0],phone:"13800000002",email:"叶小楠" },
+  { id:4,name:"陈启添",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"2025级",gender:"男",scores:[0],phone:"13800000002",email:"叶小楠" },
+  { id:5,name:"黄警威",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"2025级",gender:"男",scores:[0],phone:"13800000002",email:"叶小楠" },
+  { id:6,name:"李俊昊",cls:"中国",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"2024级",gender:"男",scores:[87],phone:"13800000002",email:"Hi-Tao" },
+  { id:7,name:"潘润根",cls:"中国",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"2024级",gender:"男",scores:[66],phone:"13800000002",email:"Hi-Tao" },
+  { id:8,name:"卢裕龙",cls:"中国",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"2024级",gender:"男",scores:[70],phone:"13800000002",email:"Hi-Tao" },
+  { id:9,name:"杨慧琴",cls:"中国",age:"2025年秋季学期",major:"人工智能-前端开发工程师",grade:"2025级",gender:"女",scores:[41],phone:"13800000002",email:"Hi-Tao" },
+  { id:10,name:"凌财",cls:"中国",age:"2025年秋季学期",major:"人工智能-前端开发工程师",grade:"2025级",gender:"男",scores:[72],phone:"13800000002",email:"Hi-Tao" },
+  { id:11,name:"黄正宇",cls:"中国",age:"2024年秋季学期",major:"人工智能-机器人工程师",grade:"2024级",gender:"男",scores:[50],phone:"13800000002",email:"Xiang" },  
+  { id:12,name:"杜宇轩",cls:"中国",age:"2025年秋季学期",major:"人工智能-机器人工程师",grade:"2025级",gender:"男",scores:[40],phone:"13800000002",email:"Xiang" },  
+  { id:13,name:"杨演文",cls:"中国",age:"2025年秋季学期",major:"人工智能-机器人工程师",grade:"2025级",gender:"男",scores:[40],phone:"13800000002",email:"Xiang" },
+  { id:14,name:"赵鸿宁",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"女",scores:[0],phone:"13800000002",email:"不要@我" },
+  { id:15,name:"张苏斌",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"男",scores:[41],phone:"13800000002",email:"不要@我" },
+  { id:16,name:"李易萱",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"女",scores:[20],phone:"13800000002",email:"不要@我" },
+  { id:17,name:"石成烨",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"2025级",gender:"男",scores:[41],phone:"13800000002",email:"不要@我" }
 ];
 
 const teachers = [
