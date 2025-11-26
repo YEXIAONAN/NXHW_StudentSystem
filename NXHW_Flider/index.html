@@ -3,202 +3,296 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NXHW · 登录系统</title>
+<title>NXHW · 智能教务管理系统</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 
 <style>
   :root {
-    --primary: #2563eb;       /* 核心蓝 */
-    --primary-dark: #1e40af;
-    --primary-light: #eff6ff;
-    --text-main: #0f172a;
+    --primary: #3b82f6;       
+    --primary-dark: #2563eb;
+    --primary-light: rgba(59, 130, 246, 0.1);
+    
+    --text-main: #1e293b;
     --text-muted: #64748b;
-    --border-color: #e2e8f0;
+    --text-light: #f8fafc;
+    
+    --bg-glass: rgba(255, 255, 255, 0.65);
+    --border-glass: 1px solid rgba(255, 255, 255, 0.5);
+    --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    
     --danger: #ef4444;
+
+    /* 动态背景球颜色 */
+    --blob-1: #60a5fa;
+    --blob-2: #a78bfa;
+    --blob-3: #f472b6;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
   
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', -apple-system, sans-serif;
     min-height: 100vh;
-    display: flex;
-    overflow: hidden; /* 防止出现滚动条 */
-    background: #fff;
-  }
-
-  /* --- 左侧：品牌视觉区 --- */
-  .brand-section {
-    flex: 1.2;
-    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+    color: var(--text-main);
+    background: #f0f4f8;
+    overflow-x: hidden;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 60px;
-    color: #fff;
-    overflow: hidden;
   }
-  
-  #particles-js { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-  .brand-content { position: relative; z-index: 2; animation: fadeInUp 0.8s ease-out; }
+  /* --- 动态背景 (与Dashboard保持一致) --- */
+  .bg-blobs {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;
+  }
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5;
+    animation: blobBounce 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .blob-1 { width: 500px; height: 500px; background: var(--blob-1); top: -150px; left: -100px; }
+  .blob-2 { width: 400px; height: 400px; background: var(--blob-2); bottom: -100px; right: -100px; animation-delay: -2s; }
+  .blob-3 { width: 300px; height: 300px; background: var(--blob-3); top: 40%; left: 30%; animation-delay: -4s; opacity: 0.4; }
 
+  @keyframes blobBounce {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(40px, 60px) scale(1.1); }
+  }
+
+  /* --- 导航栏 --- */
+  .navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px; max-width: 1400px; margin: 0 auto;
+    position: relative; z-index: 10;
+  }
   .logo {
-    display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 700;
-    margin-bottom: 20px; letter-spacing: -0.5px;
+    font-size: 24px; font-weight: 800; color: var(--primary-dark);
+    display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; gap: 32px; font-weight: 500; color: var(--text-muted); }
+  .nav-item { cursor: pointer; transition: 0.2s; position: relative; }
+  .nav-item:hover { color: var(--primary); }
+  .nav-btn {
+    padding: 10px 24px; background: var(--text-main); color: #fff;
+    border-radius: 50px; font-weight: 600; font-size: 14px;
+    transition: 0.3s; cursor: pointer; border: none;
+  }
+  .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+  /* --- Hero 区域 --- */
+  .hero-container {
+    max-width: 1400px; margin: 0 auto; padding: 40px 48px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: calc(100vh - 180px); /* 减去nav和底部留白 */
+  }
+
+  /* 左侧文案 */
+  .hero-text { flex: 1; padding-right: 60px; animation: slideUp 0.8s ease-out; }
+  .badge {
+    display: inline-block; padding: 6px 12px; background: #dbeafe; color: #2563eb;
+    border-radius: 30px; font-size: 12px; font-weight: 700; margin-bottom: 24px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .hero-text h1 {
+    font-size: 56px; line-height: 1.1; font-weight: 900; letter-spacing: -2px;
+    color: var(--text-main); margin-bottom: 24px;
+  }
+  .hero-text h1 span {
+    background: linear-gradient(135deg, #2563eb 0%, #a855f7 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-text p {
+    font-size: 18px; color: var(--text-muted); line-height: 1.6; margin-bottom: 40px; max-width: 500px;
+  }
+  .stat-row { display: flex; gap: 40px; }
+  .stat-item h3 { font-size: 24px; font-weight: 800; color: var(--text-main); }
+  .stat-item p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* 右侧登录卡片 */
+  .login-wrapper {
+    width: 420px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: var(--border-glass); box-shadow: var(--shadow-card);
+    border-radius: 24px; padding: 40px;
+    animation: fadeIn 1s ease-out; position: relative;
+    top: -20px;
   }
   
-  .hero-text h1 { font-size: 48px; line-height: 1.2; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
-  .hero-text p { font-size: 18px; line-height: 1.6; opacity: 0.8; max-width: 500px; }
+  .login-title { font-size: 24px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+  .login-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
 
-  /* --- 右侧：登录交互区 --- */
-  .login-section {
-    flex: 1;
-    display: flex; 
-    flex-direction: column; /* 垂直排列：上-中-下 */
-    align-items: center; 
-    justify-content: center;
-    padding: 40px;
-    background: #fff;
-    position: relative;
-  }
-
-  /* 新增：登录框上方的大标题 NXHW */
-  .login-header-logo {
-    font-size: 60px;
-    font-weight: 900;
-    color: var(--primary);
-    letter-spacing: -2px;
-    margin-bottom: 10px;
-    animation: fadeIn 0.8s ease-out;
-    line-height: 1;
-  }
-
-  .login-card {
-    width: 100%; max-width: 400px;
-    animation: fadeIn 1s ease-out;
-  }
-
-  .form-header { margin-bottom: 32px; text-align: left; }
-  .form-header h2 { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
-  .form-header p { color: var(--text-muted); font-size: 15px; }
-
-  .input-group { margin-bottom: 20px; position: relative; }
-  .input-label { display: block; font-size: 14px; font-weight: 500; color: var(--text-main); margin-bottom: 8px; }
-  .input-wrapper { position: relative; }
-  .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: 0.3s; }
+  .input-group { margin-bottom: 20px; }
+  .input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+  .input-box { position: relative; }
+  .input-box i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); transition: 0.3s; }
   .form-input {
-    width: 100%; padding: 12px 16px 12px 44px;
-    border: 1px solid var(--border-color); border-radius: 10px;
-    font-size: 15px; transition: all 0.2s; color: var(--text-main);
-    background: #f8fafc;
+    width: 100%; padding: 14px 16px 14px 44px;
+    border: 1px solid rgba(0,0,0,0.1); border-radius: 12px;
+    background: rgba(255,255,255,0.5); font-size: 15px; color: var(--text-main);
+    transition: all 0.2s;
   }
   .form-input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
-  .form-input:focus + .input-icon { color: var(--primary); }
+  .form-input:focus + i { color: var(--primary); }
 
   .login-btn {
-    width: 100%; padding: 12px; margin-top: 10px;
-    background: var(--primary); color: #fff;
-    border: none; border-radius: 10px;
+    width: 100%; padding: 14px; margin-top: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff; border: none; border-radius: 12px;
     font-size: 16px; font-weight: 600; cursor: pointer;
-    transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transition: all 0.2s; box-shadow: 0 4px 15px var(--primary-light);
     display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .login-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
-
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px var(--primary-light); }
+  
   .error-msg {
-    display: flex; align-items: center; gap: 6px;
-    background: #fef2f2; color: var(--danger);
-    font-size: 13px; padding: 10px 14px; border-radius: 8px;
-    margin-bottom: 20px; border: 1px solid #fee2e2;
-    display: none;
+    color: var(--danger); background: #fef2f2; border: 1px solid #fee2e2;
+    padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 20px;
+    display: none; align-items: center; gap: 6px;
   }
   .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
 
-  /* 新增：右侧底部的版权署名 */
-  .right-footer {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 12px;
-    color: #94a3b8;
+  /* --- 底部功能区 --- */
+  .features-section {
+    padding: 60px 48px; max-width: 1400px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+    border-top: 1px solid rgba(0,0,0,0.05);
   }
-  .right-footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
+  .feat-card {
+    padding: 24px; border-radius: 16px; background: rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.6); transition: 0.3s;
+  }
+  .feat-card:hover { background: #fff; transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+  .feat-icon {
+    width: 48px; height: 48px; background: #fff; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; color: var(--primary); margin-bottom: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  .feat-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .feat-card p { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
-  /* 动画定义 */
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  /* Footer */
+  .footer { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; }
+  .footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
+
+  /* 动画 */
+  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+  @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
 
-  /* 响应式适配 */
-  @media (max-width: 900px) {
-    .brand-section { display: none; }
-    .login-section { background: #fff; }
-    .login-header-logo { font-size: 48px; }
+  /* 响应式 */
+  @media (max-width: 1024px) {
+    .hero-container { flex-direction: column; text-align: center; padding-top: 40px; }
+    .hero-text { padding-right: 0; margin-bottom: 60px; }
+    .hero-text h1 { font-size: 42px; }
+    .stat-row { justify-content: center; }
+    .login-wrapper { width: 100%; max-width: 400px; }
+    .features-section { grid-template-columns: 1fr; }
+    .nav-links { display: none; } /* 移动端简化 */
   }
 </style>
 </head>
 <body>
 
-  <div class="brand-section">
-    <canvas id="canvas"></canvas>
-    <div class="brand-content">
-      <div class="logo"><i class="ri-code-s-slash-line"></i> NXHW Tech.</div>
-      <div class="hero-text">
-        <h1>Student<br>Manager<br>Pro System.</h1>
-        <p>专为计算机网络技术专业打造。<br>数据可视化，管理智能化。</p>
-        <p style="margin-top:20px; font-weight:600">"永远相信，美好的事情即将发生"</p>
-      </div>
-    </div>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
   </div>
 
-  <div class="login-section">
-    
-    <div class="login-header-logo">NXHW</div>
+  <nav class="navbar">
+    <div class="logo">
+      <i class="ri-code-s-slash-line" style="color:var(--primary)"></i> NXHW Tech.
+    </div>
+    <div class="nav-links">
+      <span class="nav-item">产品特性</span>
+      <span class="nav-item">解决方案</span>
+      <span class="nav-item">关于团队</span>
+    </div>
+    <button class="nav-btn" onclick="document.getElementById('username').focus()">
+      管理后台 <i class="ri-arrow-right-line" style="font-weight:400; margin-left:4px"></i>
+    </button>
+  </nav>
 
-    <div class="login-card">
-      <div class="form-header">
-        <h2>欢迎回来 👋</h2>
-        <p>请输入管理员账号以继续。</p>
+  <div class="hero-container">
+    
+    <div class="hero-text">
+      <span class="badge">V2.0 Pro Release</span>
+      <h1>数据驱动未来<br><span>新一代校园教务管理</span></h1>
+      <p>专为计算机网络技术专业打造。集成 ECharts 数据可视化、自动化成绩分析与全局黑夜模式。让管理更智能，让数据更清晰。</p>
+      
+      <div class="stat-row">
+        <div class="stat-item">
+          <h3>10+</h3>
+          <p>在校学生</p>
+        </div>
+        <div class="stat-item">
+          <h3>99.9%</h3>
+          <p>系统稳定性</p>
+        </div>
+        <div class="stat-item">
+          <h3>24h</h3>
+          <p>实时监控</p>
+        </div>
       </div>
+    </div>
+
+    <div class="login-wrapper">
+      <div class="login-title">欢迎回来 👋</div>
+      <div class="login-sub">请输入管理员凭证以访问 NXHW 面板</div>
 
       <div class="error-msg" id="errorMsg">
-        <i class="ri-error-warning-fill"></i> 用户名或密码错误
+        <i class="ri-error-warning-fill"></i> 账号或密码错误 (admin/admin)
       </div>
 
       <div class="input-group">
         <label class="input-label">账号</label>
-        <div class="input-wrapper">
-          <input type="text" id="username" class="form-input" placeholder="admin" value="admin">
-          <i class="ri-user-line input-icon"></i>
+        <div class="input-box">
+          <input type="text" id="username" class="form-input" placeholder="输入管理员账号" value="admin">
+          <i class="ri-user-line"></i>
         </div>
       </div>
 
       <div class="input-group">
         <label class="input-label">密码</label>
-        <div class="input-wrapper">
-          <input type="password" id="password" class="form-input" placeholder="•••••••">
-          <i class="ri-lock-line input-icon"></i>
+        <div class="input-box">
+          <input type="password" id="password" class="form-input" placeholder="••••••••">
+          <i class="ri-lock-2-line"></i>
         </div>
       </div>
 
       <button class="login-btn" onclick="login()">
-        <span>立即登录</span><i class="ri-arrow-right-line"></i>
+        <span>立即登录</span>
+        <i class="ri-login-circle-line"></i>
       </button>
 
-      <div style="margin-top: 20px; text-align: center; font-size: 13px; color: var(--text-muted);">
-        遇到问题? <a href="#" style="color:var(--primary);text-decoration:none;" onclick="alert('请联系小楠重置密码')">联系技术支持</a>
+      <div style="text-align:center; margin-top:24px; font-size:13px; color:var(--text-muted)">
+        技术支持: <a href="https://blog.yexiaonan.xyz/" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:600">小楠 (Yexiaonan)</a>
       </div>
     </div>
-
-    <div class="right-footer">
-      Copyright © 2025 <b>NanXiangHuangWu Team</b> / Powered by <a href="https://blog.yexiaonan.xyz/" target="_blank">yexiaonan</a>
-    </div>
-
   </div>
+
+  <div class="features-section">
+    <div class="feat-card">
+      <div class="feat-icon"><i class="ri-pie-chart-2-line"></i></div>
+      <h4>数据可视化</h4>
+      <p>内置 ECharts 引擎，自动生成成绩分布、男女比例及专业雷达图，数据一目了然。</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><i class="ri-moon-clear-line"></i></div>
+      <h4>全局黑夜模式</h4>
+      <p>支持一键切换深色主题，深度适配图表与表格配色，保护视力，深夜办公更舒适。</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><i class="ri-smartphone-line"></i></div>
+      <h4>响应式设计</h4>
+      <p>采用现代化 Glassmorphism 玻璃拟态设计，完美适配桌面端、平板及手机移动端。</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    &copy; 2025 NanXiangHuangWu Team. All rights reserved. <br>
+    Powered by <a href="#">NXHW Student Manager Pro</a>
+  </footer>
 
 <script>
   function login() {
@@ -206,52 +300,50 @@
     const p = document.getElementById("password").value.trim();
     const err = document.getElementById("errorMsg");
     const btn = document.querySelector('.login-btn');
+    const btnSpan = btn.querySelector('span');
+    const btnIcon = btn.querySelector('i');
 
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> 验证中...';
-    btn.style.opacity = '0.7';
+    // 模拟加载状态
+    const originalText = btnSpan.innerText;
+    btnSpan.innerText = '正在验证...';
+    btnIcon.className = 'ri-loader-4-line ri-spin';
+    btn.style.opacity = '0.8';
+    btn.style.pointerEvents = 'none';
 
     setTimeout(() => {
       if (u === "admin" && p === "admin") {
-        window.location.href = "new_dashboard.html"; // 确保文件名对应
+        // 登录成功动画
+        btnSpan.innerText = '验证成功';
+        btnIcon.className = 'ri-check-line';
+        btn.style.background = '#10b981'; // 绿色
+        
+        setTimeout(() => {
+          // 跳转到我们优化后的 Pro 界面
+          // 请确保你的文件名是 new_dashboard_pro.html 或者你自己修改的文件名
+          window.location.href = "new_dashboard_pro.html"; 
+        }, 500);
       } else {
-        btn.innerHTML = originalText;
+        // 登录失败重置
+        btnSpan.innerText = originalText;
+        btnIcon.className = 'ri-login-circle-line';
         btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+        
         err.style.display = "flex";
         err.classList.remove('shake');
-        void err.offsetWidth;
+        void err.offsetWidth; // 触发重绘
         err.classList.add('shake');
+        
         document.getElementById("password").value = '';
+        document.getElementById("password").focus();
       }
-    }, 600);
+    }, 800);
   }
 
-  document.addEventListener('keypress', function (e) { if (e.key === 'Enter') login(); });
-
-  /* Canvas Particle Animation (保留原有的粒子效果) */
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  let width, height; let particles = [];
-  function resize() { width = canvas.width = document.querySelector('.brand-section').offsetWidth; height = canvas.height = document.querySelector('.brand-section').offsetHeight; }
-  class Particle {
-    constructor() { this.x = Math.random() * width; this.y = Math.random() * height; this.vx = (Math.random() - 0.5) * 0.5; this.vy = (Math.random() - 0.5) * 0.5; this.size = Math.random() * 2 + 1; }
-    update() { this.x += this.vx; this.y += this.vy; if (this.x < 0 || this.x > width) this.vx *= -1; if (this.y < 0 || this.y > height) this.vy *= -1; }
-    draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill(); }
-  }
-  function initParticles() { particles = []; for (let i = 0; i < 60; i++) particles.push(new Particle()); }
-  function animate() {
-    ctx.clearRect(0, 0, width, height);
-    for (let i = 0; i < particles.length; i++) {
-      let p1 = particles[i]; p1.update(); p1.draw();
-      for (let j = i + 1; j < particles.length; j++) {
-        let p2 = particles[j]; let distance = Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
-        if (distance < 100) { ctx.beginPath(); ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 - distance/1000})`; ctx.lineWidth = 0.5; ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
-      }
-    }
-    requestAnimationFrame(animate);
-  }
-  window.addEventListener('resize', () => { resize(); initParticles(); });
-  resize(); initParticles(); animate();
+  // 回车登录
+  document.addEventListener('keypress', function (e) { 
+    if (e.key === 'Enter') login(); 
+  });
 </script>
 </body>
 </html>
