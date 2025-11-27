@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NXHW_ExamTest · 考试系统</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+<style>
+  /* ===========================
+     UI Foundation: Glassmorphism & Dark Mode
+     =========================== */
+  :root {
+    /* --- 亮色模式 (Light Mode) --- */
+    --primary: #3b82f6;       
+    --primary-hover: #2563eb;
+    --primary-light: rgba(59, 130, 246, 0.1); 
+    
+    --bg-body: #f0f4f8;       
+    --bg-glass: rgba(255, 255, 255, 0.85);       
+    --text-main: #1e293b;     
+    --text-muted: #64748b;    
+    
+    --border-color: rgba(255, 255, 255, 0.6);
+    --border-glass: 1px solid rgba(255, 255, 255, 0.5);
+    
+    --shadow-card: 0 10px 40px 0 rgba(31, 38, 135, 0.09);
+    
+    --success: #10b981;       
+    --warning: #f59e0b;       
+    --danger: #ef4444;
+    
+    /* 动态背景球颜色 */
+    --blob-1: #60a5fa;
+    --blob-2: #a78bfa;
+    --blob-3: #f472b6;
+  }
+
+  [data-theme="dark"] {
+    /* --- 暗色模式 (Dark Mode) --- */
+    --primary: #60a5fa;
+    --primary-hover: #3b82f6;
+    --primary-light: rgba(96, 165, 250, 0.15);
+    
+    --bg-body: #0f172a;       
+    --bg-glass: rgba(30, 41, 59, 0.85);       
+    --text-main: #f1f5f9;     
+    --text-muted: #94a3b8;    
+    
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-glass: 1px solid rgba(255, 255, 255, 0.05);
+    
+    --shadow-card: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+
+    --blob-1: #1e40af;
+    --blob-2: #5b21b6;
+    --blob-3: #9d174d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+  
+  body {
+    background: var(--bg-body); min-height: 100vh;
+    color: var(--text-main); font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.3s ease, color 0.3s ease;
+    padding: 20px;
+  }
+
+  /* 动态背景 */
+  .bg-blobs { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: blobBounce 10s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+  .blob-1 { width: 400px; height: 400px; background: var(--blob-1); top: -100px; left: -100px; }
+  .blob-2 { width: 300px; height: 300px; background: var(--blob-2); bottom: -50px; right: -50px; animation-delay: -2s; }
+  @keyframes blobBounce { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(30px, 50px) scale(1.1); } }
+
+  /* Glass Panel */
+  .glass-panel {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: var(--border-glass);
+    box-shadow: var(--shadow-card);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+
+  /* --- Main Container --- */
+  .exam-container {
+    width: 100%; max-width: 900px;
+    min-height: 500px;
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .exam-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .exam-title { 
+    font-size: 22px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .exam-header-right { display: flex; align-items: center; gap: 15px; }
+
+  /* Button Styles */
+  .btn {
+    padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 600;
+    transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; font-size: 14px;
+    text-decoration: none;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary { 
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover)); 
+    color: #fff; box-shadow: 0 4px 12px var(--primary-light);
+  }
+  .btn-primary:hover { filter: brightness(1.1); }
+
+  /* Icon Button */
+  .icon-btn { 
+    width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; color: var(--text-muted); cursor: pointer; transition: 0.2s; background: transparent; border: none;
+  }
+  .icon-btn:hover { background: var(--primary-light); color: var(--primary); }
+
+  /* --- View Transitions --- */
+  .view-section {
+    padding: 30px;
+    flex: 1;
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+  }
+  .view-section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* --- Landing View (考试选择) --- */
+  .exam-card {
+    padding: 25px; margin-bottom: 20px; border-radius: 16px;
+    border-left: 5px solid var(--primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .exam-card:hover { box-shadow: 0 10px 30px 0 rgba(31, 38, 135, 0.15); transform: translateY(-3px); }
+  .exam-card h4 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .exam-card p { color: var(--text-muted); font-size: 13px; }
+  .exam-card .info { margin-top: 15px; display: flex; gap: 20px; color: var(--text-muted); font-size: 12px; }
+
+  /* --- Info View (信息录入) --- */
+  .info-form { max-width: 450px; margin: 30px auto; padding: 30px; border-radius: 16px; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+  .input {
+    width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border-color);
+    background: transparent; color: var(--text-main);
+    transition: all 0.2s ease;
+  }
+  .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+  /* --- Exam View (开始考试) --- */
+  .exam-main { display: flex; gap: 20px; height: 100%; }
+  .exam-questions { flex: 3; overflow-y: auto; padding-right: 10px; max-height: calc(100vh - 200px); }
+  .question-item { 
+    margin-bottom: 30px; padding: 20px; border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-glass);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+  }
+  .question-item.instruction-block {
+    background: var(--primary-light); 
+    border-left: 5px solid var(--primary); 
+    padding: 15px 20px; 
+    margin-bottom: 15px;
+    border: 1px dashed var(--primary);
+  }
+  .question-title { font-size: 16px; font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
+  .question-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+
+  /* Custom Radio/Checkbox */
+  .option-label {
+    display: flex; align-items: center; padding: 12px 15px; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s;
+    border: 1px solid var(--border-color);
+    background: transparent;
+  }
+  .option-label:hover { background: var(--primary-light); border-color: var(--primary); }
+  .option-label input { display: none; }
+  .custom-radio {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--text-muted);
+    margin-right: 12px; position: relative; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .option-label input:checked + .custom-radio { border-color: var(--primary); background-color: var(--primary); }
+  .option-label input:checked + .custom-radio::after {
+    content: ''; position: absolute; top: 4px; left: 4px;
+    width: 6px; height: 6px; border-radius: 50%; background: #fff;
+  }
+
+  /* Timer/Navigation Sidebar */
+  .exam-sidebar { 
+    flex: 1; padding: 20px; border-radius: 16px;
+    background: var(--bg-glass);
+    max-width: 250px;
+  }
+  .timer-box { 
+    text-align: center; padding: 20px; border-radius: 12px; 
+    margin-bottom: 20px; background: var(--primary-light); color: var(--primary);
+    border: 1px dashed var(--primary);
+  }
+  .timer-box .time { font-size: 36px; font-weight: 800; }
+  .timer-box .label { font-size: 14px; font-weight: 600; }
+
+  .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .nav-btn {
+    width: 30px; height: 30px; border-radius: 6px; background: rgba(125, 125, 125, 0.1);
+    color: var(--text-muted); display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;
+  }
+  .nav-btn.answered { background: var(--success); color: #fff; }
+  .nav-btn.current { background: var(--primary); color: #fff; transform: scale(1.1); box-shadow: 0 2px 8px var(--primary-light); }
+
+  /* --- Result View (成绩展示) --- */
+  .result-box { 
+    text-align: center; max-width: 500px; margin: 40px auto; padding: 40px;
+    border-radius: 20px; background: var(--bg-glass);
+  }
+  .result-box h3 { font-size: 32px; font-weight: 800; margin-bottom: 10px; }
+  .result-box p { font-size: 16px; color: var(--text-muted); margin-bottom: 30px; }
+  .score-display { 
+    font-size: 80px; font-weight: 900; 
+    color: var(--success); 
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    line-height: 1;
+  }
+  .score-display small { font-size: 20px; font-weight: 700; color: var(--text-muted); }
+  
+  /* Toast Notification (From Dashboard) */
+  .toast {
+    position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100%);
+    background: var(--text-main); color: var(--bg-body);
+    padding: 12px 24px; border-radius: 50px; font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 200;
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast-info { background: var(--primary); color: #fff; }
+
+  @media (max-width: 768px) {
+    .exam-container { margin: 0; border-radius: 0; height: 100vh; max-width: 100%; }
+    .exam-header { padding: 15px 20px; }
+    .exam-main { flex-direction: column; }
+    .exam-sidebar { max-width: 100%; order: -1; padding: 15px; }
+    .exam-questions { padding-right: 0; max-height: unset; overflow-y: visible; }
+    .info-form { padding: 15px; margin: 20px auto; }
+  }
+</style>
+</head>
+<body data-theme="light">
+
+<div class="bg-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  </div>
+
+<div class="exam-container glass-panel">
+  <header class="exam-header glass-panel">
+    <div class="exam-title">
+      <i class="ri-code-s-slash-line"></i> NXHW_ExamTest
+    </div>
+    <div class="exam-header-right">
+       <button class="icon-btn" onclick="toggleTheme()" title="切换主题">
+        <i class="ri-sun-line" id="themeIcon"></i>
+      </button>
+      <a href="download.html" class="btn btn-primary" style="background:var(--success)">
+        <i class="ri-dashboard-2-line"></i> 资源下载
+      </a>
+    </div>
+  </header>
+
+  <div id="landingView" class="view-section active">
+    <h2 style="margin-bottom: 25px; font-weight: 700;">请选择考试内容</h2>
+    <div id="examSelectionList">
+      </div>
+  </div>
+
+  <div id="infoView" class="view-section">
+    <div class="info-form glass-panel">
+      <h3 style="margin-bottom: 20px; text-align: center;">考生信息录入</h3>
+      <div class="form-group">
+        <label for="studentName"><i class="ri-user-line"></i> 姓名</label>
+        <input type="text" id="studentName" class="input" placeholder="请输入您的姓名" required>
+      </div>
+      <div class="form-group">
+        <label for="studentID"><i class="ri-contacts-line"></i> 年龄</label>
+        <input type="text" id="studentID" class="input" placeholder="请输入您的年龄" required>
+      </div>
+      <div class="form-group">
+        <label for="studentMajor"><i class="ri-book-open-line"></i> 所在组别</label>
+        <input type="text" id="studentMajor" class="input" placeholder="例如：一组" required>
+      </div>
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn btn-primary" onclick="submitInfo()">
+          <i class="ri-login-box-line"></i> 确认信息并开始考试
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="examView" class="view-section" style="padding: 0 30px 30px 30px;">
+    <h3 style="margin-bottom: 15px; font-weight: 700; padding: 15px 0;">当前考试：<span id="examName"></span></h3>
+    <div class="exam-main">
+      <div class="exam-questions" id="questionContainer">
+        </div>
+      <div class="exam-sidebar">
+        <div class="timer-box">
+          <div class="label">剩余时间</div>
+          <div class="time" id="examTimer">00:00</div>
+        </div>
+
+        <h4 style="font-size: 15px; margin-bottom: 10px; font-weight: 600;">试题导航</h4>
+        <div class="nav-grid" id="questionNav">
+          </div>
+
+        <button class="btn btn-primary" style="width: 100%; margin-top: 20px; background:var(--danger)" onclick="submitExam()">
+          <i class="ri-check-line"></i> 提前交卷
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultView" class="view-section">
+    <div class="result-box glass-panel">
+      <i class="ri-trophy-line" style="font-size: 50px; color: var(--warning); margin-bottom: 10px;"></i>
+      <h3 id="resultTitle">考试结束</h3>
+      <p>考生：<span id="resultName" style="font-weight: 600;"></span> | 考试科目：<span id="resultSubject"></span></p>
+      
+      <div class="score-display">
+        <span id="finalScore">0</span><small>分</small>
+      </div>
+
+      <p id="scoreComment" style="font-size: 18px; margin-top: 15px; font-weight: 600; color:var(--success)"></p>
+      <p style="font-size: 14px; color: var(--text-muted); margin-top: 5px;">注：理论题总分100分，实操和打字部分需人工批改。</p>
+
+      <button class="btn btn-primary" style="margin-top: 30px;" onclick="location.reload()">
+        <i class="ri-restart-line"></i> 返回首页重新考试
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast" class="toast"><i class="ri-information-line"></i> <span>Message</span></div>
+
+<script>
+  // ===========================
+  // 1. DATA (试题数据)
+  // ===========================
+  const EXAM_DATA = {
+    1: {
+      name: "Linux与MySQL基础测验",
+      time: 30, // 30 分钟
+      questions: [
+        // Linux 基础题 (1-12)
+        { id: 101, type: 'single', text: '以下哪个命令用于查看当前所在目录？ (5分)', options: ['ls', 'pwd', 'cd', 'who'], answer: 'pwd', points: 5 },
+        { id: 102, type: 'single', text: '哪个命令用于修改文件权限？ (5分)', options: ['chmod', 'chown', 'mkdir', 'ps'], answer: 'chmod', points: 5 },
+        { id: 103, type: 'single', text: 'Linux 中目录 `/etc` 的主要作用是什么？ (5分)', options: ['存放用户目录', '存放系统配置文件', '存放临时文件', '存放日志文件'], answer: '存放系统配置文件', points: 5 },
+        { id: 104, type: 'single', text: '使用命令 `ls -l` 时，第一列的第一个字符 `d` 表示什么？ (5分)', options: ['普通文件', '链接文件', '目录', '设备文件'], answer: '目录', points: 5 },
+        { id: 105, type: 'boolean', text: '命令 `rm -rf /` 会删除整个系统。 (5分)', answer: true, points: 5 },
+        { id: 106, type: 'single', text: '哪个命令可以查看当前系统的进程？ (5分)', options: ['top', 'df', 'free', 'ssh'], answer: 'top', points: 5 },
+        { id: 107, type: 'single', text: '`chmod 755 file.sh` 中的 `755` 表示： (5分)', options: ['所有用户均可写', '文件所有者可读写执行，其余用户可读执行', '所有用户只能执行', '所有用户可读写执行'], answer: '文件所有者可读写执行，其余用户可读执行', points: 5 },
+        { id: 108, type: 'single', text: '使用 `grep` 命令可以： (5分)', options: ['编辑文件', '搜索文本内容', '复制文件', '移动文件'], answer: '搜索文本内容', points: 5 },
+        { id: 109, type: 'boolean', text: '`systemctl restart nginx` 作用是重启 nginx 服务。 (5分)', answer: true, points: 5 },
+        { id: 110, type: 'single', text: '`/var/log` 目录主要存放： (5分)', options: ['软件安装包', '系统日志', '内核模块', '脚本文件'], answer: '系统日志', points: 5 },
+        { id: 111, type: 'single', text: '哪条命令用于查看系统当前磁盘使用情况？ (5分)', options: ['ps', 'ss', 'df -h', 'uname -a'], answer: 'df -h', points: 5 },
+        { id: 112, type: 'boolean', text: '在 Linux 中，所有东西都被视为文件，包括设备。 (5分)', answer: true, points: 5 },
+        // MySQL 基础题 (13-20)
+        { id: 113, type: 'single', text: '创建一张表使用的 SQL 语句关键字是： (5分)', options: ['ADD TABLE', 'CREATE TABLE', 'INSERT TABLE', 'NEW TABLE'], answer: 'CREATE TABLE', points: 5 },
+        { id: 114, type: 'single', text: '向表中插入数据使用以下哪条语句？ (5分)', options: ['INSERT INTO table_name (...) VALUES (...)' , 'UPDATE table_name SET ...', 'ADD VALUES ...', 'PUT INTO table_name'], answer: 'INSERT INTO table_name (...) VALUES (...)', points: 5 },
+        { id: 115, type: 'single', text: '查询所有数据一般使用： (5分)', options: ['SELECT * FROM table_name;', 'SHOW table_name;', 'FIND table_name;', 'GET table_name;'], answer: 'SELECT * FROM table_name;', points: 5 },
+        { id: 116, type: 'single', text: '删除表中 id=10 的记录，应该使用： (5分)', options: ['REMOVE FROM table WHERE id=10;', 'DELETE table WHERE id=10;', 'DELETE FROM table WHERE id=10;', 'DROP FROM table WHERE id=10;'], answer: 'DELETE FROM table WHERE id=10;', points: 5 },
+        { id: 117, type: 'single', text: '修改某条数据使用： (5分)', options: ['INSERT', 'DELETE', 'UPDATE', 'ALTER'], answer: 'UPDATE', points: 5 },
+        { id: 118, type: 'single', text: '为表新增一个字段 age（整数类型），正确语句是： (5分)', options: ['ADD age INT;', 'ALTER TABLE table_name ADD age INT;', 'INSERT TABLE ADD age INT;', 'CHANGE TABLE table_name ADD age INT;'], answer: 'ALTER TABLE table_name ADD age INT;', points: 5 },
+        { id: 119, type: 'single', text: '删除整张表应使用： (5分)', options: ['DELETE * FROM table_name;', 'DROP table_name;', 'DROP TABLE table_name;', 'REMOVE TABLE table_name;'], answer: 'DROP TABLE table_name;', points: 5 },
+        { id: 120, type: 'single', text: '下面哪条 SQL 可以查询 name 字段包含 “test” 的行？ (5分)', options: ['SELECT * FROM table WHERE name = \'%test%\';', 'SELECT * FROM table WHERE name LIKE \'%test%\';', 'SELECT * FROM table WHERE name IN \'%test%\';', 'SELECT * FROM table LIKE name \'%test%\';'], answer: 'SELECT * FROM table WHERE name LIKE \'%test%\';', points: 5 }
+      ]
+    },
+    
+    // 2. YOLO视觉模型与Python基础测试题 (共 100 分)
+    2: {
+      name: "YOLO视觉模型与Python基础测试题",
+      time: 30, // 30 分钟
+      questions: [
+        // YOLO视觉模型基础 (1-5, 选择题) - 每题 7 分
+        { id: 401, type: 'single', text: 'YOLO的全称是： (7分)', options: ['You Only Look Once', 'Your Object Location Optimizer', 'Young Object Learning Algorithm', 'Yield Of Lost Entities'], answer: 'You Only Look Once', points: 7 },
+        { id: 402, type: 'single', text: 'YOLOv5模型的输入图像尺寸通常要求是： (7分)', options: ['固定416×416像素', '必须是正方形且为32的倍数', '任意尺寸均可，会自动缩放', '必须为640×640像素'], answer: '必须是正方形且为32的倍数', points: 7 },
+        { id: 403, type: 'single', text: '在YOLO中，NMS（非极大值抑制）的主要作用是： (7分)', options: ['加速模型训练速度', '去除重叠的重复检测框', '提高图像分辨率', '减少模型参数量'], answer: '去除重叠的重复检测框', points: 7 },
+        { id: 404, type: 'single', text: 'YOLO模型输出的检测框通常包含以下信息，除了： (7分)', options: ['中心点坐标（x, y）', '宽度和高度（w, h）', '置信度分数', '原始图像的文件名'], answer: '原始图像的文件名', points: 7 },
+        { id: 405, type: 'single', text: 'IOU（交并比）的计算公式是： (7分)', options: ['交集面积 / 并集面积', '并集面积 / 交集面积', '交集面积 / 预测框面积', '并集面积 / 真实框面积'], answer: '交集面积 / 并集面积', points: 7 },
+        
+        // YOLO视觉模型基础 (6-8, 判断题) - 每题 7 分
+        { id: 406, type: 'boolean', text: 'YOLO是一种两阶段目标检测算法。 (7分)', answer: false, points: 7 },
+        { id: 407, type: 'boolean', text: 'YOLOv8相比YOLOv5主要改进了网络结构和训练策略，检测精度更高。 (7分)', answer: true, points: 7 },
+        { id: 408, type: 'boolean', text: 'YOLO模型只能检测训练时出现过的物体类别，无法识别新类别。 (7分)', answer: true, points: 7 },
+        
+        // Python编程基础 (9-10, 选择题) - 每题 7 分
+        { id: 409, type: 'single', text: '以下哪个表达式在Python中是合法的？ (7分)', options: ['3 + \'5\'', 'int(\'3.14\')', '[1, 2, 3] + [4, 5]', '{\'a\':1} + {\'b\':2}'], answer: '[1, 2, 3] + [4, 5]', points: 7 },
+        { id: 410, type: 'single', text: '关于Python列表推导式，以下说法正确的是： (7分)', options: ['只能创建空列表', '比for循环效率低', '可以包含条件判断', '不能嵌套使用'], answer: '可以包含条件判断', points: 7 },
+        
+        // Python编程基础 (11-13, 选择题) - 每题 6 分
+        { id: 411, type: 'single', text: '执行 `print(type(lambda x: x+1))` 的输出是： (6分)', options: ['<class \'int\'>', '<class \'function\'>', '<class \'lambda\'>', '报错'], answer: '<class \'function\'>', points: 6 },
+        { id: 412, type: 'single', text: '以下哪个方法可以正确读取图像文件用于YOLO预测？ (6分)', options: ['open(\'image.jpg\').read()', 'cv2.imread(\'image.jpg\')', 'json.load(\'image.jpg\')', 'pandas.read_csv(\'image.jpg\')'], answer: 'cv2.imread(\'image.jpg\')', points: 6 },
+        { id: 413, type: 'single', text: '在Python中，`if __name__ == \'__main__\':` 的作用是： (6分)', options: ['判断程序是否出错', '判断当前模块是否被直接运行', '判断Python版本', '判断操作系统类型'], answer: '判断当前模块是否被直接运行', points: 6 },
+        
+        // Python编程基础 (14-15, 判断题) - 每题 6 分
+        { id: 414, type: 'boolean', text: 'Python字典的键必须是不可变类型。 (6分)', answer: true, points: 6 },
+        { id: 415, type: 'boolean', text: '使用YOLOv8进行预测时，必须安装ultralytics库。 (6分)', answer: true, points: 6 }
+      ]
+    }
+  };
+
+  // ===========================
+  // 2. GLOBAL STATE
+  // ===========================
+  let currentExamId = null;
+  let timerInterval = null;
+  let timeLeftSeconds = 0;
+  let studentAnswers = {};
+  let studentInfo = {};
+
+  // ===========================
+  // 3. UI & Utility Functions
+  // ===========================
+
+  // 统一的视图切换函数
+  function switchView(viewId, examId = null) {
+    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+
+    if (viewId === 'landingView') {
+      renderExamSelection();
+    }
+    if (viewId === 'examView' && examId) {
+      currentExamId = examId;
+      prepareExam(examId);
+    }
+  }
+
+  // 切换亮色/暗黑主题
+  function toggleTheme() {
+    const body = document.body;
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeIcon').className = isDark ? 'ri-sun-line' : 'ri-moon-line';
+  }
+
+  // Toast 消息提示
+  function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    t.innerHTML = `<i class="ri-information-line"></i> <span>${msg}</span>`;
+    t.className = `toast toast-${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ===========================
+  // 4. LANDING VIEW Logic
+  // ===========================
+  function renderExamSelection() {
+    const container = document.getElementById('examSelectionList');
+    container.innerHTML = Object.keys(EXAM_DATA).map(id => {
+      const exam = EXAM_DATA[id];
+      // 只有非指令题才计入可自动评分的总分
+      const autoGradedQuestions = exam.questions.filter(q => q.type !== 'instruction');
+      const totalPoints = autoGradedQuestions.reduce((sum, q) => sum + q.points, 0);
+      const questionCount = autoGradedQuestions.length;
+      
+      const examTitle = exam.name.includes("实操") ? 
+          `<i class="ri-tools-line" style="color:var(--danger)"></i> ${exam.name} (含人工批改项)` : 
+          `<i class="ri-file-text-line" style="color:var(--primary)"></i> ${exam.name}`;
+
+      return `
+        <div class="exam-card glass-panel" onclick="startExam(${id})">
+          <h4>${examTitle}</h4>
+          <p>涵盖${exam.questions.length}个项目（其中${questionCount}道自动评分题），旨在评估您在${exam.name.split('测验')[0].split('测试题')[0].split('基础')[0]}领域的基础掌握程度。</p>
+          <div class="info">
+            <span><i class="ri-time-line"></i> 考试时长：${exam.time}分钟</span>
+            <span><i class="ri-question-line"></i> 自动评分题数：${questionCount}</span>
+            <span><i class="ri-star-line"></i> 自动评分总分：${totalPoints}分</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function startExam(id) {
+    currentExamId = id;
+    showToast(`已选择 [${EXAM_DATA[id].name}]，请先填写个人信息。`, 'info');
+    switchView('infoView');
+  }
+
+  // ===========================
+  // 5. INFO VIEW Logic
+  // ===========================
+  function submitInfo() {
+    const name = document.getElementById('studentName').value.trim();
+    const id = document.getElementById('studentID').value.trim();
+    const major = document.getElementById('studentMajor').value.trim();
+
+    if (!name || !id || !major) {
+      showToast('请填写所有考生信息！', 'danger');
+      return;
+    }
+
+    studentInfo = { name, id, major };
+    studentAnswers = {}; // 重置答案
+    showToast(`信息确认：${name}，考试即将开始！`, 'success');
+    
+    // 切换到考试界面
+    switchView('examView', currentExamId);
+  }
+
+  // ===========================
+  // 6. EXAM VIEW Logic
+  // ===========================
+  function prepareExam(examId) {
+    const exam = EXAM_DATA[examId];
+    document.getElementById('examName').innerText = exam.name;
+    
+    renderQuestions(exam.questions);
+    startTimer(exam.time);
+  }
+
+  function renderQuestions(questions) {
+    const qContainer = document.getElementById('questionContainer');
+    const navContainer = document.getElementById('questionNav');
+    
+    let qHTML = '';
+    let navHTML = '';
+    let autoGradedIndex = 0; // 仅为可自动评分的题目编号
+    
+    questions.forEach((q, index) => {
+      
+      if (q.type === 'instruction') {
+         // Custom rendering for instructional headers/blocks
+         const isHeader = q.text.match(/^[一二三四]、/);
+         
+         qHTML += `
+            <div id="q_item_${q.id}" class="question-item instruction-block" 
+                 style="background:var(--primary-light); border-left: 5px solid ${isHeader ? 'var(--danger)' : 'var(--primary)'}; padding: 15px 20px; margin-bottom: 15px; border: 1px dashed ${isHeader ? 'var(--danger)' : 'var(--primary)'};">
+                 <div style="font-size: 16px; font-weight: ${isHeader ? '700' : '500'}; color: var(--text-main);">
+                    ${q.text}
+                 </div>
+            </div>
+         `;
+         return; // Skip nav button and answer logic for instructions
+      }
+      
+      // Logic for selectable questions (single, boolean)
+      autoGradedIndex++;
+      const qNum = autoGradedIndex; // Use autoGradedIndex for visible question number
+      const typeLabel = q.type === 'single' ? '单选题' : '判断题';
+      
+      let optionsHTML = '';
+      if (q.type === 'single') {
+        const letters = ['A', 'B', 'C', 'D'];
+        optionsHTML = q.options.map((option, optIndex) => `
+          <label class="option-label">
+            <input type="radio" name="q_${q.id}" value="${option}" onchange="recordAnswer(${q.id}, this.value, ${index})">
+            <span class="custom-radio"></span>
+            ${letters[optIndex]}. ${option}
+          </label>
+        `).join('');
+      } else if (q.type === 'boolean') {
+        optionsHTML = `
+          <label class="option-label">
+            <input type="radio" name="q_${q.id}" value="true" onchange="recordAnswer(${q.id}, this.value, ${index})">
+            <span class="custom-radio"></span>
+            正确
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q_${q.id}" value="false" onchange="recordAnswer(${q.id}, this.value, ${index})">
+            <span class="custom-radio"></span>
+            错误
+          </label>
+        `;
+      }
+      
+      qHTML += `
+        <div id="q_item_${q.id}" class="question-item">
+          <div class="question-title">[${typeLabel} / ${q.points}分] ${qNum}. ${q.text}</div>
+          <div class="question-options">${optionsHTML}</div>
+        </div>
+      `;
+
+      navHTML += `
+        <a href="#q_item_${q.id}" id="q_nav_${q.id}" class="nav-btn" onclick="highlightQuestion(${q.id})">${qNum}</a>
+      `;
+    });
+
+    qContainer.innerHTML = qHTML;
+    navContainer.innerHTML = navHTML;
+    
+    // Find first non-instruction question to highlight
+    const firstGradedQ = questions.find(q => q.type !== 'instruction');
+    if (firstGradedQ) {
+       highlightQuestion(firstGradedQ.id);
+    }
+  }
+
+  // 记录学生答案
+  function recordAnswer(questionId, answer, index) {
+    studentAnswers[questionId] = answer;
+    
+    // 更新导航状态
+    const navBtn = document.getElementById(`q_nav_${questionId}`);
+    if (navBtn) {
+      navBtn.classList.add('answered');
+    }
+    
+    // 自动滚动到下一个可评分的问题
+    const questions = EXAM_DATA[currentExamId].questions;
+    let nextGradedIndex = -1;
+    for(let i = index + 1; i < questions.length; i++) {
+        if (questions[i].type !== 'instruction') {
+            nextGradedIndex = i;
+            break;
+        }
+    }
+
+    if (nextGradedIndex !== -1) {
+       const nextQ = questions[nextGradedIndex];
+       setTimeout(() => {
+         const nextItem = document.getElementById(`q_item_${nextQ.id}`);
+         if (nextItem) nextItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+         highlightQuestion(nextQ.id);
+       }, 300);
+    }
+  }
+
+  // 高亮当前查看的题目导航按钮
+  function highlightQuestion(qId) {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('current'));
+    const currentBtn = document.getElementById(`q_nav_${qId}`);
+    if (currentBtn) currentBtn.classList.add('current');
+  }
+
+  // 计时器逻辑
+  function startTimer(minutes) {
+    timeLeftSeconds = minutes * 60;
+    
+    // 确保只启动一个计时器
+    if (timerInterval) clearInterval(timerInterval); 
+    
+    const timerDisplay = document.getElementById('examTimer');
+    
+    timerInterval = setInterval(() => {
+      const minutes = Math.floor(timeLeftSeconds / 60);
+      const seconds = timeLeftSeconds % 60;
+      
+      timerDisplay.innerText = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      if (timeLeftSeconds <= 60) {
+        timerDisplay.style.color = 'var(--danger)'; // 最后 1 分钟红色提示
+      }
+      
+      if (timeLeftSeconds <= 0) {
+        clearInterval(timerInterval);
+        submitExam(true); // 时间到自动交卷
+      }
+      
+      timeLeftSeconds--;
+    }, 1000);
+  }
+
+  // 交卷逻辑
+  function submitExam(timeUp = false) {
+    clearInterval(timerInterval);
+    const exam = EXAM_DATA[currentExamId];
+    let score = 0;
+    
+    // 评分逻辑 (仅对非 instruction 类型进行评分)
+    exam.questions.filter(q => q.type !== 'instruction').forEach(q => {
+      const studentAns = studentAnswers[q.id];
+      let correctAns = q.answer;
+
+      // 判断题答案转换为字符串进行比较
+      if (q.type === 'boolean') {
+        correctAns = q.answer.toString();
+      }
+
+      if (studentAns === correctAns) {
+        score += q.points;
+      }
+    });
+
+    // 切换到结果界面并显示成绩
+    displayResult(score, exam.name, timeUp);
+  }
+
+  // ===========================
+  // 7. RESULT VIEW Logic
+  // ===========================
+  function displayResult(score, subjectName, timeUp) {
+    // 只有非指令题才计入可自动评分的总分
+    const autoGradedQuestions = EXAM_DATA[currentExamId].questions.filter(q => q.type !== 'instruction');
+    const totalPoints = autoGradedQuestions.reduce((sum, q) => sum + q.points, 0);
+    const passThreshold = totalPoints * 0.6; 
+
+    let comment = '';
+    let scoreColor = 'var(--danger)';
+    
+    if (score >= totalPoints * 0.9) {
+      comment = '优秀！您对知识点掌握得非常扎实，继续保持！';
+      scoreColor = 'var(--primary)';
+    } else if (score >= passThreshold) {
+      comment = '恭喜！理论考试通过，表现良好！';
+      scoreColor = 'var(--success)';
+    } else {
+      comment = '很遗憾，理论考试未通过，请回顾知识点后再次尝试。';
+    }
+
+    document.getElementById('resultTitle').innerText = timeUp ? '时间到，已自动交卷' : '恭喜交卷';
+    document.getElementById('resultName').innerText = studentInfo.name;
+    document.getElementById('resultSubject').innerText = subjectName;
+    
+    const finalScoreDisplay = document.getElementById('finalScore');
+    finalScoreDisplay.innerText = score;
+    finalScoreDisplay.style.color = scoreColor;
+    
+    document.getElementById('scoreComment').innerText = comment;
+    document.getElementById('scoreComment').style.color = scoreColor;
+
+    switchView('resultView');
+  }
+
+  // ===========================
+  // 8. Initialization
+  // ===========================
+  document.addEventListener('DOMContentLoaded', () => {
+    switchView('landingView');
+  });
+</script>
+</body>
+</html>
