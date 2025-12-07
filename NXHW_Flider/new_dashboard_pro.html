@@ -622,18 +622,18 @@
    1. DATA (Preserved)
    =========================== */
 const students = [
-  { id:1,name:"程语兴",cls:"中国",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"16岁",gender:"男",scores:[80],phone:"+86 13377181359",religion:"无",email:"叶小楠" },
-  { id:2,name:"农秋峰",cls:"中国",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"16岁",gender:"男",scores:[85],phone:"+86 19257716750",religion:"无",email:"叶小楠" },
+  { id:1,name:"程语兴",cls:"中国",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"16岁",gender:"男",scores:[65],phone:"+86 13377181359",religion:"无",email:"叶小楠" },
+  { id:2,name:"农秋峰",cls:"中国",age:"2024年秋季学期",major:"人工智能-系统架构师",grade:"16岁",gender:"男",scores:[80],phone:"+86 19257716750",religion:"无",email:"叶小楠" },
   { id:3,name:"黄世杰",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"15岁",gender:"男",scores:[0],phone:"+86 18007816094",religion:"无",email:"叶小楠" },
   { id:4,name:"陈启添",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"15岁",gender:"男",scores:[0],phone:"+86 19177144970",religion:"无",email:"叶小楠" },
-  { id:5,name:"黄警威",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"15岁",gender:"男",scores:[0],phone:"+86 19114909280",religion:"无",email:"叶小楠" },
+  { id:5,name:"黄警威",cls:"中国",age:"2025年秋季学期",major:"人工智能-系统架构师",grade:"15岁",gender:"男",scores:[55],phone:"+86 19114909280",religion:"无",email:"叶小楠" },
   { id:6,name:"李俊昊",cls:"中国",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"16岁",gender:"男",scores:[87],phone:"+86 18269692812",religion:"无",email:"Hi-Tao" },
   { id:7,name:"潘润根",cls:"中国",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"17岁",gender:"男",scores:[66],phone:"+86 18378628085",religion:"无",email:"Hi-Tao" },
   { id:8,name:"卢裕龙",cls:"中国",age:"2024年秋季学期",major:"人工智能-前端开发工程师",grade:"16岁",gender:"男",scores:[70],phone:"+86 13978684758",religion:"无",email:"Hi-Tao" },
   { id:9,name:"杨慧琴",cls:"中国",age:"2025年秋季学期",major:"人工智能-前端开发工程师",grade:"16岁",gender:"女",scores:[41],phone:"+86 18277626623",religion:"佛教",email:"Hi-Tao" },
   { id:10,name:"凌财",cls:"中国",age:"2025年秋季学期",major:"人工智能-前端开发工程师",grade:"15岁",gender:"男",scores:[72],phone:"+86 19053540657",religion:"无",email:"Hi-Tao" },
-  { id:11,name:"黄正宇",cls:"中国",age:"2024年秋季学期",major:"人工智能-机器人工程师",grade:"18岁",gender:"男",scores:[50],phone:"+86 19247755963",religion:"无",email:"Xiang" },  
-  { id:12,name:"杜宇轩",cls:"中国",age:"2025年秋季学期",major:"人工智能-机器人工程师",grade:"15岁",gender:"男",scores:[40],phone:"+86 13481108219",religion:"无",email:"Xiang" },  
+  { id:11,name:"黄正宇",cls:"中国",age:"2024年秋季学期",major:"人工智能-机器人工程师",grade:"18岁",gender:"男",scores:[67],phone:"+86 19247755963",religion:"无",email:"Xiang" },  
+  { id:12,name:"杜宇轩",cls:"中国",age:"2025年秋季学期",major:"人工智能-机器人工程师",grade:"15岁",gender:"男",scores:[47],phone:"+86 13481108219",religion:"无",email:"Xiang" },  
   { id:13,name:"赵鸿宁",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"16岁",gender:"女",scores:[0],phone:"+86 18587779003",religion:"佛教",email:"不要@我" },
   { id:14,name:"张苏斌",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"17岁",gender:"男",scores:[41],phone:"+86 15578871307",religion:"无",email:"不要@我" },
   { id:15,name:"李易萱",cls:"中国",age:"2025年秋季学期",major:"人工智能-算法软件工程师",grade:"15岁",gender:"女",scores:[20],phone:"+86 15994350752",religion:"基督教",email:"不要@我" },
@@ -654,19 +654,55 @@ const exams = [
   { id:1,name:"人工智能 - 一组 - 一次测验",subject:"Linux基础",time:"2025-01-05",num:2,pass:"叶小楠" },
   { id:2,name:"人工智能 - 二组 - 一次测验",subject:"网页技术",time:"2025-03-12",num:5,pass:"Hi-Tao" },
   { id:3,name:"人工智能 - 三组 - 一次测验",subject:"Python 基础（机器人编程方向）",time:"2025-03-12",num:3,pass:"Xiang" },
-  { id:4,name:"人工智能 - 四组 - 一次测验",subject:"Python 基础",time:"2025-03-12",num:3,pass:"Zhou" }
+  { id:4,name:"人工智能 - 四组 - 一次测验",subject:"Python 基础",time:"2025-03-12",num:3,pass:"Zhou" },
+  { id:5,name:"人工智能 - 一组 - 二次测验",subject:"Linux基础",time:"2025-11-27",num:5,pass:"叶小楠" },
+  { id:6,name:"人工智能 - 二组 - 二次测验",subject:"网页技术",time:"2025-11-27",num:5,pass:"Hi-Tao" },
+  { id:7,name:"人工智能 - 三组 - 二次测验",subject:"Python 基础（机器人编程方向）",time:"2025-11-27",num:3,pass:"Xiang" },
+  { id:8,name:"人工智能 - 四组 - 二次测验",subject:"Python 基础",time:"2025-11-27",num:3,pass:"Zhou" }
 ];
 
 const examInfoList = [
+    {
+    id:1, course:"Linux与MySQL基础测验", date:"2025-11-27", teacher:"叶小楠", count:5,
+    students:[
+      { name:"程语兴", score:65, comment:"有点小退步" },
+      { name:"农秋峰", score:80, comment:"继续保持！" },
+      { name:"黄警威", score:55, comment:"不错，很棒！" },
+    ]
+  },
   {
-    id:1, course:"Linux基础", date:"2025-04-10", teacher:"叶小楠", count:2,
+    id:2, course:"网页技术", date:"2025-11-27", teacher:"Hi-Tao", count:5,
+    students:[
+      { name:"李俊昊", score:90, comment:"认真审题、温故而知新" },
+      { name:"潘润根", score:88, comment:"理论知识也很重要" },
+      { name:"卢裕龙", score:96, comment:"打字速度理论知识要提升" },
+      { name:"杨慧琴", score:30, comment:"不要气馁，继续加油" },
+      { name:"凌财", score:108, comment:"Very good" },
+    ]
+  },
+  {
+    id:3, course:"Python 基础（机器人编程方向）", date:"2025-11-01", teacher:"Xiang", count:2,
+    students:[
+      { name:"黄正宇", score:67, comment:"及格，再接再厉！" },
+      { name:"杜宇轩", score:47, comment:"有点吃力，希望再努力！" },
+    ]
+  },
+  {
+    id:4, course:"Python 基础", date:"2025-11-01", teacher:"周", count:3,
+    students:[
+      { name:"吴光鑫", score:65, comment:"再接再厉" },
+      { name:"张苏彬", score:41, comment:"基础不牢" },
+    ]
+  },
+  {
+    id:5, course:"Linux基础", date:"2025-10-20", teacher:"叶小楠", count:2,
     students:[
       { name:"程语兴", score:80, comment:"继续加油！" },
       { name:"农秋峰", score:85, comment:"继续加油！" },
     ]
   },
   {
-    id:2, course:"网页技术", date:"2025-03-20", teacher:"Hi-Tao", count:5,
+    id:6, course:"网页技术", date:"2025-10-20", teacher:"Hi-Tao", count:5,
     students:[
       { name:"李俊昊", score:87, comment:"认真审题、温故而知新" },
       { name:"潘润根", score:66, comment:"理论知识也很重要" },
@@ -676,7 +712,7 @@ const examInfoList = [
     ]
   },
   {
-    id:3, course:"Python 基础（机器人编程方向）", date:"2025-04-10", teacher:"Xiang", count:3,
+    id:7, course:"Python 基础（机器人编程方向）", date:"2025-11-01", teacher:"Xiang", count:3,
     students:[
       { name:"黄正宇", score:50, comment:"及格，再接再厉！" },
       { name:"杜宇轩", score:40, comment:"有点吃力，希望再努力！" },
@@ -684,7 +720,7 @@ const examInfoList = [
     ]
   },
   {
-    id:4, course:"Python 基础", date:"2025-04-10", teacher:"周", count:3,
+    id:8, course:"Python 基础", date:"2025-11-01", teacher:"周", count:3,
     students:[
       { name:"张苏斌", score:41, comment:"再接再厉" },
       { name:"李易萱", score:20, comment:"基础不牢" },
